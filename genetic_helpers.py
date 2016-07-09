@@ -31,7 +31,8 @@ def breed(phrase1, phrase2):
 
 def mutate(phrase, mutation_rate):
     if random.random() < mutation_rate:
-        phrase[random.randint(0, len(phrase)-1)] = random.choice(lowercase)
+        index = random.randint(0, len(phrase)-1)
+        phrase = phrase[0:index] + random.choice(lowercase) + phrase[index+1:]
     return phrase
 
 def get_scores(generation, target):
@@ -41,14 +42,18 @@ def get_survivors(generation, target, survival_rate):
     survivor_count = int(len(generation)*survival_rate)
     scores_with_index = list(enumerate(get_scores(generation, target)))
     sorted_scores_with_index = sorted(scores_with_index, key=lambda x: x[0])
-    return sorted_scores_with_index[0:survivor_count]
+    survivors = []
+    for t in sorted_scores_with_index[0:survivor_count]:
+        survivors.append(generation[t[0]])
+    return survivors
     
-def iterate_generation(old_generation, survival_rate, mutation_rate):
+def iterate_generation(old_generation, target, survival_rate=0.3, mutation_rate=0.01):
     new_generation = []
-    survivors = get_survivors(old_generation)
+    survivors = get_survivors(old_generation, target, survival_rate)
     while len(new_generation) < 20:
-        phrase1 = random.choice(old_generation)
-        phrase2 = random.choice(new_generation)
-        new_generation.append(mutate(breed(phrase1, phrase2)))
+        parent1 = random.choice(old_generation)
+        parent2 = random.choice(old_generation)
+        child = mutate(breed(parent1, parent2), mutation_rate)
+        new_generation.append(child)
     return new_generation
     
