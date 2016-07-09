@@ -42,12 +42,12 @@ assert(phrase == mutated)
 mutated = gh.mutate(phrase, 1)
 print("Original:", phrase)
 print("Mutated: ", mutated)
-assert(mutated != phrase, "Phrase did not mutate, WARNING: There is a 1/27 chance of this happeningordinarily. If you see this warning more often than that, this is a failed test")
+assert(mutated != phrase)
 different_letters = 0
 for i in range(len(phrase)):
     if mutated[i] != phrase[i]:
         different_letters +=1 
-assert(different_letters is 1, "Again, this will occur 1/27 times by random chance")
+assert(different_letters is 1)
 print("mutate passes tests")
 
 # get_scores
@@ -64,16 +64,20 @@ assert(gh.get_survivors(generation, target, 0.8) == ["goodbye", "goodboy"])
 print("get_survivors passes tests")
 
 # iterate_generation
-old_generation = gh.random_generation(20,15)
-target = gh.random_phrase(15)
-new_generation = gh.iterate_generation(old_generation, target, 0.3, 0.01)
-assert(len(new_generation) == len(old_generation))
+survival_rate = 0.5
+mutation_rate = 0.1
+first_generation = gh.random_generation(20,5)
+target = gh.random_phrase(5)
+print("Target:", target)
+first_scores = gh.get_scores(first_generation, target)
+first_average = sum(first_scores) / len(first_scores)
+print("Old average:", first_average)
+new_generation = gh.iterate_generation(first_generation, target, survival_rate, mutation_rate)
+assert(len(new_generation) == len(first_generation))
 for i in range(100):
     old_generation = new_generation
-    new_generation = gh.iterate_generation(old_generation, target, 0.3, 0.01)
-old_scores = gh.get_scores(old_generation, target)
+    new_generation = gh.iterate_generation(old_generation, target, survival_rate, mutation_rate)
 new_scores = gh.get_scores(new_generation, target)
-old_average = sum(old_scores) / len(old_scores)
 new_average = sum(new_scores) / len(new_scores)
-print(new_average, old_average)
-assert(new_average > old_average)
+print("End average:", new_average)
+assert(new_average > first_average)
