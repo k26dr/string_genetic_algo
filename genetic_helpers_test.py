@@ -56,36 +56,41 @@ target = "hello"
 assert(gh.get_scores(generation, target) == [.8,.2])
 print("get scores passes tests")
 
-#get_survivors
+# get_survivors
 assert(gh.get_survivors(generation, target, 0.5) == ["gello"])
 generation = ["goodbye", "goodboy", "joedbor"]
 target = "goodbyf"
 assert(gh.get_survivors(generation, target, 0.8) == ["goodbye", "goodboy"])
-print("get_survivors passes tests")
 
 target = gh.random_phrase(5)
 generation = gh.random_generation(200, 5)
 survivors = gh.get_survivors(generation, target, 0.1)
 generation_scores = sorted(gh.get_scores(generation, target), reverse=True)
 survivors_scores = sorted(gh.get_scores(survivors, target), reverse=True)
-print("Generation scores: ", generation_scores)
-print("survivors_scores: ", survivors_scores)
 assert(generation_scores[0:20] == survivors_scores)
+print("get_survivors passes tests")
 
 # iterate_generation
-survival_rate = 0.05
-mutation_rate = 0.1
-generations = 100
+survival_rate = 0.3
+mutation_rate = 0.2
+generations = 30
 generation_size = 2000
-phrase_size = 500
+phrase_size = 50
 
 first_generation = gh.random_generation(generation_size, phrase_size)
 target = gh.random_phrase(phrase_size)
+new_generation = gh.iterate_generation(first_generation, target, survival_rate, mutation_rate)
+assert(len(new_generation) == len(first_generation))
+
+print("Starting full simulation")
+print("Generations:", generations)
+print("Generation Size:", generation_size)
+print("Survival Rate:", survival_rate)
+print("Mutation Rate:", mutation_rate)
 print("Target:", target)
 first_scores = gh.get_scores(first_generation, target)
-print("Starting selected:", sorted(first_scores, reverse=True)[0:int(len(first_scores)*survival_rate)])
 first_average = sum(first_scores) / len(first_scores)
-print("Old average:", first_average)
+print("Generation 0 average:", first_average)
 new_generation = gh.iterate_generation(first_generation, target, survival_rate, mutation_rate)
 assert(len(new_generation) == len(first_generation))
 
@@ -95,10 +100,5 @@ for i in range(generations):
     new_generation = gh.iterate_generation(old_generation, target, survival_rate, mutation_rate)
     new_scores = gh.get_scores(new_generation, target)
     new_average = sum(new_scores) / len(new_scores)
-    # print("Generation survivor scores:", sorted(new_scores, reverse=True)[0:int(len(new_scores)*survival_rate)])
-    print("Generation average:", new_average)
-    print("Generation max:", max(new_scores))
-new_scores = gh.get_scores(new_generation, target)
-new_average = sum(new_scores) / len(new_scores)
-print("End average:", new_average)
+    print("Generation {0} average:".format(i+1), new_average)
 assert(new_average > first_average)
