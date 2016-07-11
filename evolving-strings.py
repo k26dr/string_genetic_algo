@@ -23,6 +23,3 @@ generations = 20
 generations.append([])
 for i in range(generation_size):
     generations[0].append(gh.generate_phrase(len(target)))        
-
-# start iterating
-for i

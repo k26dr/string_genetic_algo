@@ -41,7 +41,7 @@ def get_scores(generation, target):
 def get_survivors(generation, target, survival_rate):
     survivor_count = int(len(generation)*survival_rate)
     scores_with_index = list(enumerate(get_scores(generation, target)))
-    sorted_scores_with_index = sorted(scores_with_index, key=lambda x: x[0])
+    sorted_scores_with_index = sorted(scores_with_index, key=lambda x: x[1], reverse=True)
     survivors = []
     for t in sorted_scores_with_index[0:survivor_count]:
         survivors.append(generation[t[0]])
@@ -50,9 +50,9 @@ def get_survivors(generation, target, survival_rate):
 def iterate_generation(old_generation, target, survival_rate=0.3, mutation_rate=0.01):
     new_generation = []
     survivors = get_survivors(old_generation, target, survival_rate)
-    while len(new_generation) < 20:
-        parent1 = random.choice(old_generation)
-        parent2 = random.choice(old_generation)
+    while len(new_generation) < len(old_generation):
+        parent1 = random.choice(survivors)
+        parent2 = random.choice(survivors)
         child = mutate(breed(parent1, parent2), mutation_rate)
         new_generation.append(child)
     return new_generation
